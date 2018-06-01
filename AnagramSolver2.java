@@ -2,6 +2,9 @@
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 public class AnagramSolver2 {
 	/*key:sorted word, value:original word*/
@@ -31,14 +34,16 @@ public class AnagramSolver2 {
 	static int smallest;
 	static int biggest;
 	public static void main(String[] args) {
+		System.out.println("PLEASE INPUT CHARS. IF Qu IS INCLUDED, PLEASE INPUT Q & U");
 		String sortedInput = null;
 		/*access the site and read*/
 		try {
 			URL url = new URL("https://icanhazwordz.appspot.com/dictionary.words");
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(),"JISAutoDetect"))){
-				while (reader.readLine()!=null) {
-					String str=reader.readLine().toUpperCase();
-					addInList(str);	
+			String str;
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(),"UTF-16"))){
+				while ((str=reader.readLine())!=null) {
+					str=str.toUpperCase();
+					addInList(str);
 				}
 				reader.close();
 			}
@@ -49,9 +54,10 @@ public class AnagramSolver2 {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		try {
+			
 			while((line=br.readLine())!=null){
-				System.out.println("PLEASE INPUT CHARS. IF Qu IS INCLUDED, PLEASE INPUT Q & U");
 				bestWord.removeAll(bestWord);
+				maxScore=0;
 				line=line.toUpperCase();
 				sortedInput = sort(line);
 				strArray=null;
@@ -61,7 +67,7 @@ public class AnagramSolver2 {
 					for(String str:anagrams.get(i)){
 						if(containsAllAlphabets(str)) {
 							int score=scoreCalculator(str);
-							System.out.println(str+" ");
+							System.out.print(str+" ");
 							if(maxScore<score){//change the max score
 								maxScore=score;
 								bestWord.removeAll(bestWord);
@@ -74,10 +80,16 @@ public class AnagramSolver2 {
 				}
 				System.out.println("");
 				System.out.println("THE BEST WORD WAS FOUND!  Estimated Score is "+maxScore);
+				String firstBestWord = bestWord.get(i);
 				for(int i=0; i<bestWord.size(); i++){
 					System.out.print(bestWord.get(i)+" ");
 				}
 				System.out.println("");
+				/*store bestWord to clipboard*/
+				Toolkit kit = Toolkit.getDefaultToolkit();
+				Clipboard clip = kit.getSystemClipboard();
+				StringSelection ss = new StringSelection(firstBestWord);
+				clip.setContents(ss, ss);
 			}
 			br.close();
 		} catch (IOException e){
