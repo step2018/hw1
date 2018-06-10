@@ -40,7 +40,7 @@ public class AnagramSolver2 {
 		try {
 			URL url = new URL("https://icanhazwordz.appspot.com/dictionary.words");
 			String str;
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(),"UTF-16"))){
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(),"UTF-8"))){
 				while ((str=reader.readLine())!=null) {
 					str=str.toUpperCase();
 					addInList(str);
@@ -80,7 +80,7 @@ public class AnagramSolver2 {
 				}
 				System.out.println("");
 				System.out.println("THE BEST WORD WAS FOUND!  Estimated Score is "+maxScore);
-				String firstBestWord = bestWord.get(i);
+				String firstBestWord = bestWord.get(0);
 				for(int i=0; i<bestWord.size(); i++){
 					System.out.print(bestWord.get(i)+" ");
 				}
